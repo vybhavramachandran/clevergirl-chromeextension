@@ -26,6 +26,17 @@ function send(text) {
   });
 }
 
+//function that fetches the title of the tab in question. This title is sent to
+//the backend, which is then sent to OpenAI, to add more context to the query
+// function getTitle() {
+//   chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+//     tabs[0].url;     //url
+//     tabs[0].title;   //title
+//   });
+//   console.log("Title fetched"+tabs[0].title);
+//   return tabs[0].title;
+// }
+
 //Creates Context Menus shown when the user Right Clicks on a page
 //after selecting text (https://developer.chrome.com/apps/contextMenus)
 chrome.runtime.onInstalled.addListener(function () {
@@ -51,7 +62,7 @@ const options = {
 chrome.contextMenus.onClicked.addListener(function (clickData, tabData) {
   if (clickData.menuItemId == 'why' && clickData.selectionText) {
     console.log('Why' + clickData.selectionText);
-    console.log('tabData', tabData.url);
+    console.log('tabData', tabData.title);
     word = clickData.selectionText;
     question = "Why is " + word + "?";
     console.log("question is " + question);
@@ -60,7 +71,7 @@ chrome.contextMenus.onClicked.addListener(function (clickData, tabData) {
 
     var xhr = new XMLHttpRequest();
     send("loading");
-    xhr.open("GET", "http://127.0.0.1:5000/why?question=" + question, true);
+    xhr.open("GET", "http://127.0.0.1:5000/why?question=" + question+"&title="+tabData.title, true);
     xhr.responseType = 'json';
     xhr.onreadystatechange = function () {
       console.log(xhr);
@@ -74,7 +85,6 @@ chrome.contextMenus.onClicked.addListener(function (clickData, tabData) {
   }
   else if (clickData.menuItemId == 'what' && clickData.selectionText) {
     console.log('What' + clickData.selectionText);
-    console.log('tabData', tabData.url);
     word = clickData.selectionText;
     question = "What is " + word + "?";
     console.log("question is " + question);
@@ -83,7 +93,7 @@ chrome.contextMenus.onClicked.addListener(function (clickData, tabData) {
 
     var xhr = new XMLHttpRequest();
     send("loading");
-    xhr.open("GET", "http://127.0.0.1:5000/what?question=" + question, true);
+    xhr.open("GET", "http://127.0.0.1:5000/what?question=" + question+"&title="+tabData.title, true);
     xhr.responseType = 'json';
     xhr.onreadystatechange = function () {
       console.log(xhr);
@@ -97,7 +107,6 @@ chrome.contextMenus.onClicked.addListener(function (clickData, tabData) {
   }
   else if (clickData.menuItemId == 'how' && clickData.selectionText) {
     console.log('How' + clickData.selectionText);
-    console.log('tabData', tabData.url);
     word = clickData.selectionText;
     question = "How did " + word + "?";
     console.log("question is " + question);
@@ -106,7 +115,7 @@ chrome.contextMenus.onClicked.addListener(function (clickData, tabData) {
 
     var xhr = new XMLHttpRequest();
     send("loading");
-    xhr.open("GET", "http://127.0.0.1:5000/how?question=" + question, true);
+    xhr.open("GET", "http://127.0.0.1:5000/how?question=" + question+"&title="+tabData.title, true);
     xhr.responseType = 'json';
     xhr.onreadystatechange = function () {
       console.log(xhr);
